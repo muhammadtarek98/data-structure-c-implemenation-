@@ -1,0 +1,820 @@
+#include<iostream>
+using namespace std;
+class doublyLinkedList {
+private:
+	struct Node {
+		int item;
+		Node* next;
+		Node* prev;
+	};
+	Node* first;
+	Node* last;
+	int count;
+
+public:
+	doublyLinkedList() {
+		first = NULL;
+		last = NULL;
+		count = 0;
+	}
+	bool isEmpty()
+	{
+		return (first == NULL);
+	}
+	void destroy()
+	{
+		Node *temp;
+		while (first != NULL)
+		{
+			temp = first;
+			first = first->next;
+			delete temp;
+		}
+		last = NULL;
+		count = 0;
+	}
+
+	void insertLast(int val) {
+		Node* newNode = new Node;
+		newNode->item = val;
+		if (count == 0) {
+			first = last = newNode;
+			newNode->next = newNode->prev = NULL;
+		}
+		else {
+			newNode->next = NULL;
+			newNode->prev = last;
+			last->next = newNode;
+			last = newNode;
+
+
+
+		}
+		count++;
+	}
+
+
+
+	void insertFirst(int item)
+	{
+		Node*newNode = new Node;
+		newNode->item = item;
+		if (count == 0) {
+			first = last = newNode;
+			newNode->next = newNode->prev = NULL;
+		}
+		else {
+			newNode->next = first;
+			newNode->prev = NULL;
+			first->prev = newNode;
+			first = newNode;
+
+		}
+		count++;
+	}
+
+
+
+
+
+
+	void insertAt(int pos, int item)
+	{
+		if (pos < 0 || pos > count)
+			cout << "Out Of Range ...!" << endl;
+		else
+		{
+			Node *newNode = new Node;
+			newNode->item = item;
+			if (pos == 0)
+				insertFirst(item);
+			else if (pos == count)
+				insertLast(item);
+			else
+			{
+				Node *current = first;
+				for (int i = 1; i < pos; i++)
+				{
+					current = current->next;
+				}
+
+				newNode->next = current->next;
+				newNode->prev = current;
+				current->next->prev = newNode;
+				current->next = newNode;
+				count++;
+			}
+
+		}
+	}
+
+
+	void removeFirst()
+	{
+		if (count == 0)
+			cout << "Empty List" << endl;
+		else if (count == 1)//first == last
+		{
+			delete first;
+			last = first = NULL;
+		}
+		else
+		{
+			Node* current = first;
+			first = first->next;
+			first->prev = NULL;
+			delete current;
+		
+		}
+		count--;
+	}
+
+	void deleteNthNode(int pos)
+	{
+		if (pos < 0 || pos >= count) {
+			cout << "Out Of Range" << endl;
+			return;
+		}
+		else if (pos == 0)
+		{
+			removeFirst();
+		}
+		else if (pos == count - 1)
+		{
+			removeLast();
+		}
+		else {
+			Node *current = first->next;
+
+
+			for (int i = 1; i < pos; i++)
+			{
+				current = current->next;
+			}
+			current->prev->next = current->next;
+			current->next->prev = current->prev;
+			delete current;
+		}
+		count--;
+	}
+	void removeLast()
+	{
+		if (count == 0)
+			cout << "Empty List" << endl;
+		else if (count == 1)
+		{
+			delete first;
+			//		delete last;
+			last = first = NULL;
+			count--;
+		}
+		else
+		{
+			Node *current = last;
+			last = last->prev;
+			last->next = NULL;
+			delete current;
+			count--;
+		}
+	}
+
+
+
+	void remove(int item)
+	{
+		if (isEmpty())
+		{
+			cout << "Empty List Can't Remove ";
+			return;
+		}
+		Node*current = first->next;
+
+		if (first->item == item)//delete the first element, special case
+		{
+			/*
+			first = current->next;
+			if (first != NULL)
+				first->prev = NULL;
+			delete current;
+			return;
+			*/
+			removeFirst();
+			return;
+		}
+		else
+		{
+			
+
+			while (current != NULL)//current->item!=element
+			{
+				if (current->item == item)
+					break;
+				current = current->next;
+			}
+
+			if (current == NULL) {
+				cout << "The item is not there\n";
+				return;
+			}
+			else if (current->next == NULL) {
+				removeLast();
+				return;
+			}
+
+			else
+			{
+				current->prev->next = current->next;
+				//if (current->next != NULL)
+				current->next->prev = current->prev;
+				delete current;
+				count--;
+			}
+
+		}
+
+
+	}
+
+	void display() {
+		if (isEmpty())
+		{
+			cout << "Empty List Can't Display...!";
+		}
+		else {
+			Node* temp = first;
+			while (temp != nullptr) {
+				cout << temp->item << " ";
+				temp = temp->next;
+			}
+		}
+		cout << endl;
+
+	}
+
+
+
+	void reverse_display() {
+		if (isEmpty())
+		{
+			cout << "Empty List Can't Display Reverse...!";
+		}
+		else
+		{
+			Node* temp = last;
+			while (temp != NULL) {
+				cout << temp->item << " ";
+				temp = temp->prev;
+			}
+		}
+
+	}
+
+
+};
+int main() {
+	doublyLinkedList dl;
+	dl.insertAt(0, 4);
+	dl.insertAt(1, 6);
+	dl.insertAt(2, 7);
+	dl.insertFirst(2);
+	dl.insertLast(10);
+	dl.remove(7);
+	dl.display();
+	dl.reverse_display();
+}
+------------------------------------
+#include<iostream>
+using namespace std;
+const int MAX_SIZE = 3;
+template<class t>
+class stack {
+	int top;
+	t item[MAX_SIZE];
+public:
+	stack() :top(-1) {}
+	bool isEmpty()
+	{
+		return top < 0;
+	}
+
+	void push(t Element)
+	{
+		if (top >= MAX_SIZE-1)
+		{
+			cout << "Stack full on push";
+		}
+		else
+		{
+			top++;
+			item[top] = Element;
+		}
+	}
+	void pop()
+	{
+		if (isEmpty())
+			cout << "stack empty on pop";
+		else
+			top--;
+	}
+	void pop(t&Element)
+	{
+		if (isEmpty())
+			cout << "stack empty on pop";
+		else {
+			Element = item[top];
+			top--;
+		}
+	}
+	void getTop(t&stackTop)
+	{
+		if (isEmpty())
+			cout << "stack empty on getTop";
+		else {
+			stackTop = item[top];
+			cout << stackTop << endl;
+		}
+	}
+	void print() {
+		cout << "[ ";
+		for (int i = top; i >= 0; i--)
+		{
+			cout << item[i] << " ";
+		}
+		cout << "]";
+		cout << endl;
+
+	}
+};
+int main() {
+	stack<int>s;
+	s.push(5);
+	s.push(15);
+	s.push(20);
+	s.print();
+}
+-------------------------------------
+#include <iostream>
+#include <cassert>
+using namespace std;
+template<class t>
+class linkedQueue
+{
+private:
+	struct Node
+	{
+		t item;
+		Node *next;
+	};
+	int length;
+	Node *frontPtr, *rearPtr;
+
+public:
+	
+linkedQueue():frontPtr(NULL), rearPtr(NULL), length(0)
+	{}
+	bool isEmpty()
+	{
+		return (length == 0);
+	}
+
+	void dequeue()
+	{
+		if (isEmpty())
+			cout << "Empty Queue" << endl;
+		else if (length == 1)
+		{
+			delete frontPtr;
+			rearPtr = NULL;
+			length = 0;
+		}
+		else
+		{
+			Node *current = frontPtr;
+			frontPtr = frontPtr->next;
+			delete current;//free(current)
+			length--;
+		}
+	}
+
+	void enqueue(t item)
+	{
+		Node *newNode = new Node;
+		newNode->item = item;
+		newNode->next = NULL;
+
+		if (length == 0)
+			rearPtr = frontPtr = newNode;
+		else
+		{
+			rearPtr->next = newNode;
+			rearPtr = newNode;
+		}
+		length++;
+	}
+
+	t front()
+	{
+		assert(!isEmpty());
+		return frontPtr->item;
+	}
+
+	t rear()
+	{
+		assert(!isEmpty());
+		return rearPtr->item;
+	}
+
+	void clearQueue()
+	{
+		Node *current;
+
+		while (frontPtr != NULL)
+		{
+			current = frontPtr;
+			frontPtr = frontPtr->next;
+			delete current;
+		}
+		rearPtr = NULL;
+		length = 0;
+	}
+	void display()
+	{
+		Node*cur = frontPtr;
+		cout << "Item in the queue :[ ";
+		while (cur!=NULL)
+		{
+			cout << cur->item<<" ";
+			cur = cur->next;
+		}cout << "]" << endl;
+	}
+
+	void search(t item)
+	{
+		Node*cur = frontPtr;
+		bool flag = true;
+		while (cur != NULL)
+		{
+			if (cur->item == item)
+			{
+				cout << "the item :" << item << " found" << endl;
+				flag = false;
+				break;
+			}
+			cur = cur->next;
+		}
+		if(flag)
+			cout << "the item : " << item << " not found" << endl;
+
+	}
+
+};
+
+int main()
+{
+	linkedQueue<int>q1;
+
+	for (int i = 1; i <= 20; i++)
+		q1.enqueue(i);
+
+	cout << q1.front() << endl;
+	cout << q1.rear() << endl;
+	q1.display();
+	return 0;
+}
+-----------------------------------------
+#include <iostream>
+#include <cassert>
+using namespace std;
+class arrayQueueType
+{
+	int rear;
+	int front;
+	int length;
+	int *arr;
+	int maxSize;
+
+public:
+	arrayQueueType(int size) {
+		if (size <= 0)
+			maxSize = 100;
+		else
+			maxSize = size;
+
+		front = 0;
+
+		arr = new int[maxSize];
+		rear = maxSize - 1;
+		length = 0;
+	}
+	int isEmpty()
+	{
+		return length == 0;
+	}
+	bool isFull()
+	{
+		return length == maxSize;
+	}
+	void addQueue(int Element)
+	{
+		if (isFull())
+		{
+			cout << "Queue Full Can't Enqueue ...!";
+		}
+		else
+		{
+			rear = (rear + 1) % maxSize;
+			arr[rear] = Element;
+			length++;
+		}
+
+
+	}
+	void deleteQueue()
+	{
+		if (isEmpty())
+		{
+			cout << "Empty Queue Can't Dequeue ...!";
+		}
+		else
+		{
+			front = (front + 1) % maxSize;
+			--length;
+
+		}
+
+
+	}
+	int frontQueue()
+	{
+		assert(!isEmpty());
+		return arr[front];
+	}
+
+	int rearQueue()
+	{
+		assert(!isEmpty());
+		return arr[rear];
+	}
+
+
+	void printQueue()
+	{
+		if (!isEmpty()) {
+			for (size_t i = front; i != rear; i = (i + 1) % maxSize)
+			{
+				cout << arr[i] << " ";
+			}
+			cout << arr[rear];
+		}
+		else
+			cout << "Empty Queue";
+	}
+
+
+	int queueSearch(int element) {
+		int pos = -1;
+		if (!isEmpty())
+		{
+			for (int i = front; i != rear; i = (i + 1) % maxSize)
+				if (arr[i] == element)
+				{
+					pos = i;
+					break;
+				}
+			if (pos == -1)
+			{
+				if (arr[rear] == element)
+					pos = rear;
+			}
+		}
+		else
+			cout << "Q is empty ! " << endl;
+		return pos;
+	}
+
+
+	~arrayQueueType() {
+		delete[]arr;
+	}
+};
+
+int main()
+{
+	arrayQueueType q1(5);
+	q1.addQueue(10);
+	q1.addQueue(20);
+	q1.addQueue(30);
+	q1.addQueue(40);
+	q1.addQueue(50);
+	q1.printQueue();
+	return 0;
+}
+-----------------------------------------
+#include <iostream>
+#include <cassert>
+
+using namespace std;
+
+class arrayListType
+{
+public:
+	arrayListType(int size = 100);
+	arrayListType(arrayListType& otherList); //copy constructor	
+	~arrayListType(); // destructor
+
+	bool isEmpty();
+	bool isFull();
+	int listSize();
+	int maxListSize();
+	void print();
+	bool isItemAtEqual(int loc, int item);
+	void insertAt(int loc, int item);
+	void insertEnd(int item);
+	void removeAt(int loc);
+	void retrieveAt(int loc, int& item);
+	void replaceAt(int loc, int item);
+	void clearList();
+	int seqSearch(int item);
+	void insertNoDuplicate(int item);
+	void remove(int item);
+private:
+	int *list; 	//array to hold the list elements
+    int length;		//to store the length of the list
+    int maxSize;		//to store the maximum size of the list
+};
+
+arrayListType::arrayListType(int size)
+{
+	/* initilize the private members */
+	if(size <= 0)
+	{
+		cout << " Wrong Size " << endl;
+		maxSize = 100;
+	}
+	else
+		maxSize = size;
+
+	length = 0;
+	list = new int [maxSize];
+	assert(list != NULL); //terminate if unable to allocate memory space
+}
+
+arrayListType::arrayListType(arrayListType& otherList)
+{
+	maxSize = otherList.maxSize;
+	length = otherList.length;
+	list = new int [maxSize]; 	//create the array
+	assert(list != NULL);	//terminate if unable to allocate memory space
+
+	for(int j = 0; j < length; j++)  //copy otherList
+		list [j] = otherList.list[j];
+}
+
+arrayListType::~arrayListType()
+{
+	delete [] list;
+}
+
+bool arrayListType::isEmpty()
+{
+	return (length == 0);
+}
+
+bool arrayListType::isFull()
+{
+	return (length == maxSize);
+}
+
+int arrayListType::listSize()
+{
+	return length;
+}
+
+int arrayListType::maxListSize()
+{
+	return maxSize;
+}
+
+void arrayListType::print()
+{
+	for(int i = 0; i < length; i++)
+		cout<<list[i]<<" ";
+	cout<<endl;
+}
+
+bool arrayListType::isItemAtEqual(int loc, int item)
+{
+	if(loc < 0 || loc >= length)
+		return false;
+	else
+		return (list[loc] == item);
+}
+
+void arrayListType::insertAt(int loc, int item)
+{
+	if(isFull())
+		cout<<" The List is Full " << endl;
+	else if(loc < 0 || loc > length)
+		cout << "Out of Range " << endl;
+	else
+	{
+		for(int i = length; i > loc; i--)
+			list[i] = list[i - 1];	//shift right
+		
+		list[loc] = item;	//insert the item at the specified position
+		length++;	//increment the length
+	}
+}
+
+void arrayListType::insertEnd(int item)
+{
+	if(isFull())
+		cout<<" The List is Full " << endl;
+	else
+		list[length++] = item;
+}
+void arrayListType::retrieveAt(int loc, int& item)
+{
+	if(loc < 0 || loc >= length)
+		cout << "Out of Range " << endl;
+	else
+		item = list[loc];
+}
+
+void arrayListType::replaceAt(int loc, int item)
+{
+	if(loc < 0 || loc >= length)
+		cout << "Out of Range " << endl;
+	else
+		list[loc] = item;
+}
+
+void arrayListType::clearList()
+{
+	length = 0;
+}
+
+int arrayListType::seqSearch(int item)
+{
+	for(int loc = 0; loc < length; loc++)
+		if(list[loc] == item)
+			return loc;
+	return -1;
+}
+
+void arrayListType::insertNoDuplicate(int item)
+{
+	if(isFull())
+		cout<<" The List is Full " << endl;
+	else
+	{
+		int flag = seqSearch(item);
+		if(flag == -1)
+			list[length++] = item;
+		else
+			cout<<"No duplicates are allowed."<<endl;
+	}			
+}
+
+void arrayListType::remove(int item)
+{
+	int loc = seqSearch(item);
+	if(loc == -1)
+		cout<<"The item to be deleted is not in the list" << endl;
+	else
+		removeAt(loc);
+}
+
+void arrayListType::removeAt(int loc)
+{
+	if(loc < 0 || loc >= length)
+    	cout<<"The location of the item to be removed is out of range."<<endl;
+	else
+	{
+   		for(int i = loc; i < length - 1; i++)
+	 		list[i] = list[i+1];
+
+		length--;
+	}
+}
+
+int main()
+{
+	arrayListType lst1;
+	for(int i = 0; i < 20; i++)
+		lst1.insertAt(i, i * i);
+
+    lst1.print();
+    
+    int x;
+	lst1.retrieveAt(10, x);
+	
+    cout<< x << endl;
+
+    arrayListType lst2(lst1);
+    
+    lst2.print();
+
+	return 0;
+}
+----------------------------------------------
